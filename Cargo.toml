@@ -1,0 +1,16 @@
+[package]
+name = "auto-gtk-theme"
+version = "0.1.0"
+authors = ["greg <gregory.mkv@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "0.2.2", features = ["time", "macros"] }
+surf = { git = "https://github.com/http-rs/surf" }
+anyhow = "1.0.25"
+serde_json = "1.0.42"
+serde = { version = "1.0.103", features = ["derive"] }
+chrono = { version = "0.4.10", features = ["serde"] }
+
