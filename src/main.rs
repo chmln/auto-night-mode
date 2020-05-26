@@ -67,71 +67,7 @@ impl Theme {
             ])
             .spawn()?;
 
-        let replacements = maplit::hashmap! {
-            "/home/greg/.config/gtk-3.0/settings.ini" => ("Flat-Remix-GTK-Blue-Dark-Solid", "Flat-Remix-GTK-Blue-Solid"),
-            "/home/greg/.config/xsettingsd/xsettingsd.conf" => ("Flat-Remix-GTK-Blue-Dark-Solid", "Flat-Remix-GTK-Blue-Solid"),
-            "/home/greg/.config/gtk-3.0/settings.ini" => ("Papirus-Dark", "Papirus-Light"),
-            "/home/greg/.dotfiles/kitty/active_theme.conf" => ("dark.conf", "light.conf"),
-        };
-
-        replacements
-            .iter()
-            .map(|(path, r)| match self {
-                Theme::Day => (path, r.0, r.1),
-                Theme::Night => (path, r.1, r.0),
-            })
-            .for_each(|(path, find, replace)| {
-                std::process::Command::new("sd")
-                    .args(&[find, replace, path])
-                    .spawn()
-                    .map(|_| ())
-                    .map_err(|e| eprintln!("{}: {}", path, e))
-                    .unwrap_or_default()
-            });
-
-        std::fs::read_dir("/tmp/")
-            .map(|sockets| {
-                #[allow(unused_must_use)]
-                sockets
-                    .filter_map(|p| p.ok())
-                    .filter(|d| d.file_name().to_str().unwrap().starts_with("kitty-socket-"))
-                    .for_each(|socket| {
-                        std::process::Command::new("kitty")
-                            .args(&[
-                                "@",
-                                &format!("--to=unix:{}", socket.path().to_str().unwrap()),
-                                "set-colors",
-                                "-a",
-                                match self {
-                                    Theme::Night => "~/.dotfiles/kitty/dark.conf",
-                                    Theme::Day => "~/.dotfiles/kitty/light.conf",
-                                },
-                            ])
-                            .spawn()
-                            .map_err(|e| log::debug!("Error on socket {:?}: {}", socket, e));
-                    })
-            })
-            .unwrap_or(());
-
-        std::process::Command::new("nvim-ctrl")
-            .args(&[&format!("let $IS_DAY=\"{}\"", matches!(self, Theme::Day))])
-            .spawn()?;
-
-        std::process::Command::new("nvim-ctrl")
-            .args(&["source ~/.dotfiles/nvim/init.vim"])
-            .spawn()?;
-
-        std::process::Command::new("systemctl")
-            .args(&["--user", "restart", "wallpaper"])
-            .spawn()?;
-
-        std::process::Command::new("fish")
-            .arg("/home/greg/.dotfiles/bin/theme")
-            .spawn()?;
-
-        std::process::Command::new("systemctl")
-            .args(&["--user", "reload-or-restart", "xsettingsd"])
-            .spawn()?;
+        std::process::Command::new("/home/greg/.dotfiles/bin/theme").spawn()?;
 
         Ok(())
     }
