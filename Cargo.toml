@@ -14,3 +14,4 @@ maplit = "1.0.2"
 minreq = { version = "2.1.0", features = ["https", "json-using-serde"] }
 log = "0.4.8"
 flexi_logger = { version = "0.15.2", default-features = false, features = ["colors"] }
+directories-next = "2.0.0"
